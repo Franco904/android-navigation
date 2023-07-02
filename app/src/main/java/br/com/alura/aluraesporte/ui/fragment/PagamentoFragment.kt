@@ -7,27 +7,27 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import br.com.alura.aluraesporte.R
 import br.com.alura.aluraesporte.extensions.formatParaMoedaBrasileira
 import br.com.alura.aluraesporte.model.Pagamento
 import br.com.alura.aluraesporte.model.Produto
-import br.com.alura.aluraesporte.ui.activity.CHAVE_PRODUTO_ID
 import br.com.alura.aluraesporte.ui.viewmodel.PagamentoViewModel
 import kotlinx.android.synthetic.main.pagamento.*
-import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
+private const val COMPRA_REALIZADA = "Compra realizada"
 private const val FALHA_AO_CRIAR_PAGAMENTO = "Falha ao criar pagamento"
 
 class PagamentoFragment : Fragment() {
 
-    private val produtoId by lazy {
-        arguments?.getLong(CHAVE_PRODUTO_ID)
-            ?: throw IllegalArgumentException(ID_PRODUTO_INVALIDO)
-    }
+    private val args by navArgs<PagamentoFragmentArgs>()
+    private val produtoId by lazy { args.produtoId }
     private val viewModel: PagamentoViewModel by viewModel()
+    private val navController by lazy { findNavController() }
+
     private lateinit var produtoEscolhido: Produto
-    var quandoPagamentoRealizado: (idPagamento: Long) -> Unit = {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,7 +71,10 @@ class PagamentoFragment : Fragment() {
         if (::produtoEscolhido.isInitialized) {
             viewModel.salva(pagamento)
                 .observe(this, Observer {
-                    it?.dado?.let(quandoPagamentoRealizado)
+                    it?.dado?.let {
+                        Toast.makeText(context, COMPRA_REALIZADA, Toast.LENGTH_SHORT).show()
+                        navController.navigate(R.id.action_pagamentoProduto_to_listaProdutos)
+                    }
                 })
         }
     }
