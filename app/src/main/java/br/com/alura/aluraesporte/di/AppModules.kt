@@ -1,12 +1,13 @@
 package br.com.alura.aluraesporte.di
 
+import android.preference.PreferenceManager
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import br.com.alura.aluraesporte.database.AppDatabase
-import br.com.alura.aluraesporte.database.dao.PagamentoDAO
 import br.com.alura.aluraesporte.database.dao.ProdutoDAO
 import br.com.alura.aluraesporte.model.Produto
+import br.com.alura.aluraesporte.repository.LoginRepository
 import br.com.alura.aluraesporte.repository.PagamentoRepository
 import br.com.alura.aluraesporte.repository.ProdutoRepository
 import br.com.alura.aluraesporte.ui.fragment.DetalhesProdutoFragment
@@ -14,6 +15,7 @@ import br.com.alura.aluraesporte.ui.fragment.ListaProdutosFragment
 import br.com.alura.aluraesporte.ui.fragment.PagamentoFragment
 import br.com.alura.aluraesporte.ui.recyclerview.adapter.ProdutosAdapter
 import br.com.alura.aluraesporte.ui.viewmodel.DetalhesProdutoViewModel
+import br.com.alura.aluraesporte.ui.viewmodel.LoginViewModel
 import br.com.alura.aluraesporte.ui.viewmodel.PagamentoViewModel
 import br.com.alura.aluraesporte.ui.viewmodel.ProdutosViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +29,7 @@ private const val NOME_BANCO_DE_DADOS = "aluraesporte.db"
 private const val NOME_BANCO_DE_DADOS_TESTE = "aluraesporte-test.db"
 
 val testeDatabaseModule = module {
-    single<AppDatabase> {
+    single {
         Room.databaseBuilder(
             get(),
             AppDatabase::class.java,
@@ -61,7 +63,7 @@ val testeDatabaseModule = module {
 }
 
 val databaseModule = module {
-    single<AppDatabase> {
+    single {
         Room.databaseBuilder(
             get(),
             AppDatabase::class.java,
@@ -71,21 +73,24 @@ val databaseModule = module {
 }
 
 val daoModule = module {
-    single<ProdutoDAO> { get<AppDatabase>().produtoDao() }
-    single<PagamentoDAO> { get<AppDatabase>().pagamentoDao() }
-    single<ProdutoRepository> { ProdutoRepository(get()) }
-    single<PagamentoRepository> { PagamentoRepository(get()) }
+    single { get<AppDatabase>().produtoDao() }
+    single { get<AppDatabase>().pagamentoDao() }
+    single { ProdutoRepository(get()) }
+    single { PagamentoRepository(get()) }
+    single { LoginRepository(get()) }
+    single { PreferenceManager.getDefaultSharedPreferences(get())}
 }
 
 val uiModule = module {
-    factory<DetalhesProdutoFragment> { DetalhesProdutoFragment() }
-    factory<ListaProdutosFragment> { ListaProdutosFragment() }
-    factory<PagamentoFragment> { PagamentoFragment() }
-    factory<ProdutosAdapter> { ProdutosAdapter(get()) }
+    factory { DetalhesProdutoFragment() }
+    factory { ListaProdutosFragment() }
+    factory { PagamentoFragment() }
+    factory { ProdutosAdapter(get()) }
 }
 
 val viewModelModule = module {
-    viewModel<ProdutosViewModel> { ProdutosViewModel(get()) }
-    viewModel<DetalhesProdutoViewModel> { (id: Long) -> DetalhesProdutoViewModel(id, get()) }
-    viewModel<PagamentoViewModel> { PagamentoViewModel(get(), get()) }
+    viewModel { ProdutosViewModel(get()) }
+    viewModel { (id: Long) -> DetalhesProdutoViewModel(id, get()) }
+    viewModel { PagamentoViewModel(get(), get()) }
+    viewModel { LoginViewModel(get()) }
 }

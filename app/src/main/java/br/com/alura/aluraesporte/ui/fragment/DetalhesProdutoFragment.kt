@@ -1,12 +1,8 @@
 package br.com.alura.aluraesporte.ui.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.view.*
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import br.com.alura.aluraesporte.R
 import br.com.alura.aluraesporte.extensions.formatParaMoedaBrasileira
@@ -15,12 +11,11 @@ import kotlinx.android.synthetic.main.detalhes_produto.*
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class DetalhesProdutoFragment : Fragment() {
+class DetalhesProdutoFragment : BaseFragment() {
 
     private val args by navArgs<DetalhesProdutoFragmentArgs>()
     private val produtoId by lazy { args.produtoId }
     private val viewModel: DetalhesProdutoViewModel by viewModel { parametersOf(produtoId) }
-    private val navController by lazy { findNavController() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +38,7 @@ class DetalhesProdutoFragment : Fragment() {
     private fun configuraBotaoComprar() {
         detalhes_produto_botao_comprar.setOnClickListener {
             viewModel.produtoEncontrado.value?.let {
-                val directions = DetalhesProdutoFragmentDirections.actionDetalhesProdutoToPagamentoProduto(produtoId)
-                navController.navigate(directions)
+                navigateToPagamentoProduto()
             }
         }
     }
@@ -58,4 +52,8 @@ class DetalhesProdutoFragment : Fragment() {
         })
     }
 
+    private fun navigateToPagamentoProduto() {
+        val directions = DetalhesProdutoFragmentDirections.actionDetalhesProdutoToPagamentoProduto(produtoId)
+        navController.navigate(directions)
+    }
 }
