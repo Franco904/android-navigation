@@ -6,15 +6,19 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import br.com.alura.aluraesporte.R
 import br.com.alura.aluraesporte.extensions.formatParaMoedaBrasileira
+import br.com.alura.aluraesporte.ui.util.AppWidgetVisibility
+import br.com.alura.aluraesporte.ui.viewmodel.AppStateViewModel
 import br.com.alura.aluraesporte.ui.viewmodel.DetalhesProdutoViewModel
 import kotlinx.android.synthetic.main.detalhes_produto.*
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class DetalhesProdutoFragment : BaseFragment() {
-
     private val args by navArgs<DetalhesProdutoFragmentArgs>()
     private val produtoId by lazy { args.produtoId }
+
+    private val appViewModel: AppStateViewModel by sharedViewModel()
     private val viewModel: DetalhesProdutoViewModel by viewModel { parametersOf(produtoId) }
 
     override fun onCreateView(
@@ -31,6 +35,14 @@ class DetalhesProdutoFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        appViewModel.setWidgetsVisibility(
+            AppWidgetVisibility(
+                isAppBarVisible = true,
+                isBottomNavigationBarVisible = false
+            )
+        )
+
         buscaProduto()
         configuraBotaoComprar()
     }
@@ -53,7 +65,8 @@ class DetalhesProdutoFragment : BaseFragment() {
     }
 
     private fun navigateToPagamentoProduto() {
-        val directions = DetalhesProdutoFragmentDirections.actionDetalhesProdutoToPagamentoProduto(produtoId)
+        val directions =
+            DetalhesProdutoFragmentDirections.actionDetalhesProdutoToPagamentoProduto(produtoId)
         navController.navigate(directions)
     }
 }

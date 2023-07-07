@@ -23,4 +23,5 @@ class PagamentoRepository(private val dao: PagamentoDAO) {
         }
     }
 
+    fun buscaTodos(): LiveData<List<Pagamento>> = dao.buscaTodos()
 }

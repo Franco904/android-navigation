@@ -13,11 +13,9 @@ import br.com.alura.aluraesporte.repository.ProdutoRepository
 import br.com.alura.aluraesporte.ui.fragment.DetalhesProdutoFragment
 import br.com.alura.aluraesporte.ui.fragment.ListaProdutosFragment
 import br.com.alura.aluraesporte.ui.fragment.PagamentoFragment
+import br.com.alura.aluraesporte.ui.recyclerview.adapter.ListaPagamentosAdapter
 import br.com.alura.aluraesporte.ui.recyclerview.adapter.ProdutosAdapter
-import br.com.alura.aluraesporte.ui.viewmodel.DetalhesProdutoViewModel
-import br.com.alura.aluraesporte.ui.viewmodel.LoginViewModel
-import br.com.alura.aluraesporte.ui.viewmodel.PagamentoViewModel
-import br.com.alura.aluraesporte.ui.viewmodel.ProdutosViewModel
+import br.com.alura.aluraesporte.ui.viewmodel.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -86,11 +84,14 @@ val uiModule = module {
     factory { ListaProdutosFragment() }
     factory { PagamentoFragment() }
     factory { ProdutosAdapter(get()) }
+    factory { ListaPagamentosAdapter(get()) }
 }
 
 val viewModelModule = module {
+    viewModel { AppStateViewModel() }
     viewModel { ProdutosViewModel(get()) }
     viewModel { (id: Long) -> DetalhesProdutoViewModel(id, get()) }
     viewModel { PagamentoViewModel(get(), get()) }
     viewModel { LoginViewModel(get()) }
+    viewModel { ListaPagamentosViewModel(get(), get()) }
 }
